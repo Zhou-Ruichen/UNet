@@ -1,0 +1,83 @@
+2025-05-25 22:07:56,461 - experiment_manager - INFO - 按序列运行实验，每个配置 200 轮训练
+2025-05-25 22:07:56,461 - experiment_manager - INFO - 开始按序列运行实验...
+2025-05-25 22:07:56,461 - experiment_manager - INFO - 
+============================================================
+2025-05-25 22:07:56,461 - experiment_manager - INFO - 实验 1/5: 基线实验 - 标准MSE
+2025-05-25 22:07:56,462 - experiment_manager - INFO - 配置: baseline, 损失类型: baseline
+2025-05-25 22:07:56,462 - experiment_manager - INFO - ============================================================
+2025-05-25 22:07:56,462 - experiment_manager - INFO - 开始运行实验: baseline, 训练轮数: 200
+2025-05-25 22:07:56,462 - experiment_manager - INFO - 执行命令: python corrected_training_variants.py --config baseline --epochs 200
+2025-05-25 22:07:56,495 - experiment_manager - ERROR - 实验 baseline 失败，返回码: 2
+2025-05-25 22:07:56,496 - experiment_manager - ERROR - ✗ 实验 baseline 失败
+2025-05-25 22:08:29,371 - experiment_manager - INFO - 用户选择停止实验
+2025-05-25 22:08:29,371 - experiment_manager - INFO - 
+开始综合分析...
+2025-05-25 22:08:29,371 - experiment_manager - INFO - 开始综合分析...
+2025-05-25 22:08:29,371 - experiment_manager - INFO - 收集所有实验结果...
+2025-05-25 22:08:29,372 - experiment_manager - WARNING - 未找到任何实验结果
+2025-05-25 22:08:29,374 - experiment_manager - WARNING - 没有找到实验结果，无法进行分析
+2025-05-25 22:08:58,105 - experiment_manager - INFO - 按序列运行实验，每个配置 200 轮训练
+2025-05-25 22:08:58,105 - experiment_manager - INFO - 开始按序列运行实验...
+2025-05-25 22:08:58,105 - experiment_manager - INFO - 
+============================================================
+2025-05-25 22:08:58,105 - experiment_manager - INFO - 实验 1/5: 基线实验 - 标准MSE
+2025-05-25 22:08:58,106 - experiment_manager - INFO - 配置: baseline, 损失类型: baseline
+2025-05-25 22:08:58,106 - experiment_manager - INFO - ============================================================
+2025-05-25 22:08:58,106 - experiment_manager - INFO - 开始运行实验: baseline, 训练轮数: 200
+2025-05-25 22:08:58,106 - experiment_manager - INFO - 执行命令: python training_variants.py --config baseline --epochs 200
+2025-05-26 00:26:29,561 - experiment_manager - INFO - 实验 baseline 成功完成，用时: 8251.45秒
+2025-05-26 00:26:29,564 - experiment_manager - INFO - ✓ 实验 baseline 完成
+2025-05-26 00:26:29,566 - experiment_manager - INFO - 📊 baseline 实验结果:
+2025-05-26 00:26:29,567 - experiment_manager - INFO -    最佳验证损失: 0.017846
+2025-05-26 00:26:29,567 - experiment_manager - INFO -    训练轮数: 200
+2025-05-26 00:26:29,567 - experiment_manager - INFO -    损失组合: baseline
+2025-05-26 00:26:29,567 - experiment_manager - INFO - 等待10秒后继续下一个实验...
+2025-05-26 00:26:39,567 - experiment_manager - INFO - 
+============================================================
+2025-05-26 00:26:39,567 - experiment_manager - INFO - 实验 2/5: TID权重MSE
+2025-05-26 00:26:39,568 - experiment_manager - INFO - 配置: weighted_mse, 损失类型: weighted_mse
+2025-05-26 00:26:39,568 - experiment_manager - INFO - ============================================================
+2025-05-26 00:26:39,568 - experiment_manager - INFO - 开始运行实验: weighted_mse, 训练轮数: 200
+2025-05-26 00:26:39,568 - experiment_manager - INFO - 执行命令: python training_variants.py --config weighted_mse --epochs 200
+2025-05-26 02:48:11,439 - experiment_manager - INFO - 实验 weighted_mse 成功完成，用时: 8491.87秒
+2025-05-26 02:48:11,440 - experiment_manager - INFO - ✓ 实验 weighted_mse 完成
+2025-05-26 02:48:11,441 - experiment_manager - INFO - 📊 weighted_mse 实验结果:
+2025-05-26 02:48:11,441 - experiment_manager - INFO -    最佳验证损失: 0.031676
+2025-05-26 02:48:11,441 - experiment_manager - INFO -    训练轮数: 200
+2025-05-26 02:48:11,442 - experiment_manager - INFO -    损失组合: weighted_mse
+2025-05-26 02:48:11,442 - experiment_manager - INFO - 等待10秒后继续下一个实验...
+2025-05-26 02:48:21,442 - experiment_manager - INFO - 
+============================================================
+2025-05-26 02:48:21,442 - experiment_manager - INFO - 实验 3/5: MSE + 梯度损失
+2025-05-26 02:48:21,442 - experiment_manager - INFO - 配置: mse_grad, 损失类型: weighted_mse_grad
+2025-05-26 02:48:21,442 - experiment_manager - INFO - ============================================================
+2025-05-26 02:48:21,442 - experiment_manager - INFO - 开始运行实验: mse_grad, 训练轮数: 200
+2025-05-26 02:48:21,443 - experiment_manager - INFO - 执行命令: python training_variants.py --config mse_grad --epochs 200
+2025-05-26 05:17:59,689 - experiment_manager - INFO - 实验 mse_grad 成功完成，用时: 8978.25秒
+2025-05-26 05:17:59,690 - experiment_manager - INFO - ✓ 实验 mse_grad 完成
+2025-05-26 05:17:59,691 - experiment_manager - INFO - 📊 mse_grad 实验结果:
+2025-05-26 05:17:59,692 - experiment_manager - INFO -    最佳验证损失: 0.100434
+2025-05-26 05:17:59,692 - experiment_manager - INFO -    训练轮数: 200
+2025-05-26 05:17:59,692 - experiment_manager - INFO -    损失组合: weighted_mse_grad
+2025-05-26 05:17:59,692 - experiment_manager - INFO - 等待10秒后继续下一个实验...
+2025-05-26 05:18:09,692 - experiment_manager - INFO - 
+============================================================
+2025-05-26 05:18:09,692 - experiment_manager - INFO - 实验 4/5: MSE + 频谱损失
+2025-05-26 05:18:09,693 - experiment_manager - INFO - 配置: mse_fft, 损失类型: weighted_mse_fft
+2025-05-26 05:18:09,693 - experiment_manager - INFO - ============================================================
+2025-05-26 05:18:09,693 - experiment_manager - INFO - 开始运行实验: mse_fft, 训练轮数: 200
+2025-05-26 05:18:09,693 - experiment_manager - INFO - 执行命令: python training_variants.py --config mse_fft --epochs 200
+2025-05-26 09:04:33,182 - experiment_manager - INFO - 实验 mse_fft 成功完成，用时: 13583.49秒
+2025-05-26 09:04:33,186 - experiment_manager - INFO - ✓ 实验 mse_fft 完成
+2025-05-26 09:04:33,187 - experiment_manager - INFO - 📊 mse_fft 实验结果:
+2025-05-26 09:04:33,187 - experiment_manager - INFO -    最佳验证损失: 0.034443
+2025-05-26 09:04:33,187 - experiment_manager - INFO -    训练轮数: 200
+2025-05-26 09:04:33,187 - experiment_manager - INFO -    损失组合: weighted_mse_fft
+2025-05-26 09:04:33,187 - experiment_manager - INFO - 等待10秒后继续下一个实验...
+2025-05-26 09:04:43,187 - experiment_manager - INFO - 
+============================================================
+2025-05-26 09:04:43,188 - experiment_manager - INFO - 实验 5/5: 全损失组合
+2025-05-26 09:04:45,645 - experiment_manager - INFO - 配置: all_combined, 损失类型: all
+2025-05-26 09:04:45,645 - experiment_manager - INFO - ============================================================
+2025-05-26 09:04:45,645 - experiment_manager - INFO - 开始运行实验: all_combined, 训练轮数: 200
+2025-05-26 09:04:45,645 - experiment_manager - INFO - 执行命令: python training_variants.py --config all_combined --epochs 200
