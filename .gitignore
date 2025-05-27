@@ -2,3 +2,7 @@
 /analysis_results
 /__pycache__
 /output
+/prediction_results
+/segmentation_results
+/segmentation_results_overlay
+/segmentation_results_overlay_gt

@@ -70,6 +70,7 @@ class ExperimentManager:
             ('mse_grad', 'MSE + 梯度损失', 'weighted_mse_grad'),
             ('mse_fft', 'MSE + 频谱损失', 'weighted_mse_fft'),
             ('all_combined', '全损失组合', 'all'),
+            ('swin_unet', 'Swin U-Net混合架构', 'swin_transformer'),
         ]
         
         # 实验状态跟踪
@@ -91,7 +92,7 @@ class ExperimentManager:
         with open(status_file, 'w') as f:
             json.dump(self.experiment_status, f, indent=2)
     
-    def run_single_experiment(self, config_name: str, epochs: int = 50, force_restart: bool = False) -> bool:
+    def run_single_experiment(self, config_name: str, epochs: int = 50, force_restart: bool = False, use_wandb: bool = False, quiet: bool = True) -> bool:
         """运行单个实验"""
         if not force_restart and self.experiment_status.get(config_name) == 'completed':
             logger.info(f"实验 {config_name} 已完成，跳过。使用 --force 强制重新运行。")
@@ -102,28 +103,38 @@ class ExperimentManager:
         self.save_experiment_status()
         
         try:
-            # 构造命令
+            # 构造命令 - 使用WandB集成版本
             cmd = [
-                'python', 'training_variants.py',
+                'python', 'enhanced_training_wandb.py',
                 '--config', config_name,
                 '--epochs', str(epochs)
             ]
             
+            if use_wandb:
+                cmd.append('--use_wandb')
+            
+            if quiet:
+                cmd.append('--quiet')
+            
             logger.info(f"执行命令: {' '.join(cmd)}")
             
-            # 运行实验 - 修复tqdm显示问题
+            # 运行实验 - 改进输出管理
             start_time = time.time()
             
-            # 使用实时输出，保持tqdm工作
+            # 设置环境变量
+            env = os.environ.copy()
+            env['PYTHONUNBUFFERED'] = '1'
+            
             process = subprocess.Popen(
                 cmd, 
                 stdout=subprocess.PIPE, 
                 stderr=subprocess.STDOUT,
                 universal_newlines=True,
-                bufsize=1  # 行缓冲
+                bufsize=1,
+                env=env
             )
             
-            # 保存日志并实时显示
+            # 改进的日志处理
             log_file = os.path.join(self.results_dir, f"{config_name}_training.log")
             with open(log_file, 'w', encoding='utf-8') as f:
                 while True:
@@ -131,20 +142,24 @@ class ExperimentManager:
                     if output == '' and process.poll() is not None:
                         break
                     if output:
-                        print(output.strip())  # 实时显示
+                        line = output.strip()
                         f.write(output)
                         f.flush()
+                        
+                        # 只显示关键信息（安静模式的输出已经被脚本处理）
+                        if any(keyword in line for keyword in ['✅', '📊', '📈', '📁', 'ERROR', 'CRITICAL', 'Val=', 'Epoch']):
+                            print(line)
             
             process.wait()
             end_time = time.time()
             
             if process.returncode == 0:
-                logger.info(f"实验 {config_name} 成功完成，用时: {end_time - start_time:.2f}秒")
+                logger.info(f"✅ 实验 {config_name} 成功完成，用时: {end_time - start_time:.2f}秒")
                 self.experiment_status[config_name] = 'completed'
                 self.save_experiment_status()
                 return True
             else:
-                logger.error(f"实验 {config_name} 失败，返回码: {process.returncode}")
+                logger.error(f"❌ 实验 {config_name} 失败，返回码: {process.returncode}")
                 self.experiment_status[config_name] = 'failed'
                 self.save_experiment_status()
                 return False
@@ -204,14 +219,14 @@ class ExperimentManager:
         
         return results
     
-    def quick_test_all(self, epochs: int = 10):
+    def quick_test_all(self, epochs: int = 10, use_wandb: bool = False):
         """快速测试所有配置（用于验证脚本正确性）"""
         logger.info(f"快速测试所有配置，每个配置运行 {epochs} 轮...")
         
         results = {}
         for config_name, description, _ in self.experiment_configs:
             logger.info(f"快速测试: {config_name} - {description}")
-            success = self.run_single_experiment(config_name, epochs)
+            success = self.run_single_experiment(config_name, epochs, use_wandb=use_wandb)
             results[config_name] = success
             
             if not success:
@@ -529,7 +544,6 @@ class ExperimentManager:
 
 
 def main():
-    """主函数"""
     parser = argparse.ArgumentParser(description='实验管理器 - 系统化的损失函数对比实验')
     parser.add_argument('--mode', type=str, default='sequential',
                         choices=['sequential', 'analyze', 'quick_test', 'status'],
@@ -537,6 +551,8 @@ def main():
     parser.add_argument('--epochs', type=int, default=50, help='训练轮数')
     parser.add_argument('--start_from', type=str, help='从指定配置开始运行')
     parser.add_argument('--force', action='store_true', help='强制重新运行已完成的实验')
+    parser.add_argument('--use_wandb', action='store_true', help='使用Weights & Biases进行实验跟踪')
+    parser.add_argument('--quiet', action='store_true', help='减少输出信息')
     
     args = parser.parse_args()
     
@@ -551,7 +567,8 @@ def main():
         manager.run_sequential_experiments(
             epochs=args.epochs, 
             start_from=args.start_from,
-            force_restart=args.force
+            force_restart=args.force,
+            use_wandb=args.use_wandb 
         )
         
     elif args.mode == 'analyze':
@@ -562,7 +579,7 @@ def main():
     elif args.mode == 'quick_test':
         # 快速测试
         logger.info(f"快速测试所有配置，每个配置 {args.epochs} 轮训练")
-        manager.quick_test_all(epochs=args.epochs)
+        manager.quick_test_all(epochs=args.epochs, use_wandb=args.use_wandb)
         
     elif args.mode == 'status':
         # 显示状态
